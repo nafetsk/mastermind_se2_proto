@@ -1,0 +1,18 @@
+{
+    "menu_title": "MENÜ",
+    "new_game": "NEUES SPIEL",
+    "load_game": "SPIEL LADEN",
+    "settings": "EINSTELLUNGEN",
+    "exit": "BEENDEN",
+    "select_mode": "Spielart auswählen!",
+    "rater": "Rater",
+    "coder": "Kodierer",
+    "back": "Zurück",
+    "enter_colors": "Geben Sie 5 Farben ein (R,G,B,Y,W,O)",
+    "submit": "Einreichen",
+    "congratulations": "Herzlichen Glückwunsch! Sie haben den Code erraten!",
+    "game_over": "Spiel vorbei! Der richtige Code war: ",
+    "choose_language": "Sprache wählen",
+    "english": "Englisch",
+    "german": "Deutsch"
+}

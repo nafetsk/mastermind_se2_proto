@@ -1,0 +1,18 @@
+{
+    "menu_title": "MENU",
+    "new_game": "NEW GAME",
+    "load_game": "LOAD GAME",
+    "settings": "SETTINGS",
+    "exit": "EXIT",
+    "select_mode": "Select Mode!",
+    "rater": "Guesser",
+    "coder": "Coder",
+    "back": "Back",
+    "enter_colors": "Enter 5 colors (R,G,B,Y,W,O)",
+    "submit": "Submit",
+    "congratulations": "Congratulations! You've guessed the code!",
+    "game_over": "Game Over! The correct code was: ",
+    "choose_language": "Choose Language",
+    "english": "English",
+    "german": "German"
+}
