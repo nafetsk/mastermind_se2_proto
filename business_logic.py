@@ -49,8 +49,7 @@ class Board:
 
 
 class Player:
-    def __init__(self, name):
-        self.name = name
+    pass
 
 
 class Coder(Player):
@@ -69,7 +68,7 @@ class Guesser(Player):
         später soll das abhängig von den Feedbacks und der Historie sein.
         """
         # Simple random guessing strategy
-        possible_colors = [1, 2, 3, 4, 5, 6]
+        possible_colors = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         guess = [random.choice(possible_colors) for _ in range(5)]
         return guess
 
@@ -93,11 +92,10 @@ class Game:
         return self.board
 
     def computer_guess(self):
-        """Der Computer spielt als Guesser
+        """Der Computer generiert einen Guess
         """
         guess = self.computer_player.make_guess(self.board)
         self.board.add_guess(guess)
-        return guess
 
     def play_round_human_coder(self, human_feedback):
         """Der Mensch spielt als Coder

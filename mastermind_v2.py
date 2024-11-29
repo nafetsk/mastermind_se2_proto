@@ -9,8 +9,8 @@ from textual.widgets import Button, Static, Input, Header
 from rich.console import RenderableType
 from textual import log
 from rich.text import Text
-from controller.settings import Settings
-import os
+from settings import Settings
+from controller import GameController
 
 
 class MenuScreen(Screen):
@@ -38,17 +38,17 @@ class ModeScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Container(
             Static(self.app.settings.get_text("select_mode"), id="title"),
-            Button(self.app.settings.get_text("rater"), id="rater", variant="primary"),
+            Button(self.app.settings.get_text("guesser"), id="guesser", variant="primary"),
             Button(self.app.settings.get_text("coder"), id="coder", variant="primary"),
             Button(self.app.settings.get_text("back"), id="back", variant="primary"),
             id="menu-container",
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "rater":
-            self.app.push_screen(GameScreen())
-        elif event.button.id == "kodierer":
-            self.app.push_screen(GameScreen())
+        if event.button.id == "guesser":
+            self.app.push_screen(GameScreen("guesser"))
+        elif event.button.id == "coder":
+            self.app.push_screen(GameScreen("coder"))
         elif event.button.id == "back":
             self.app.pop_screen()
 
@@ -56,10 +56,10 @@ class SettingsScreen(Screen):
 
     def compose(self) -> ComposeResult:
         yield Container(
-            Static("Sprache wählen", id="title"),
-            Button("Englisch", id="en", variant="primary"),
-            Button("Deutsch", id="de", variant="primary"),
-            Button("Zurück", id="back", variant="primary"),
+            Static(self.app.settings.get_text("choose_language"), id="title"),
+            Button(self.app.settings.get_text("english"), id="en", variant="primary"),
+            Button(self.app.settings.get_text("german"), id="de", variant="primary"),
+            Button(self.app.settings.get_text("back"), id="back", variant="primary"),
             id="menu-container",
         )
 
@@ -85,12 +85,15 @@ class ColorPeg(Static):
     def update_color(self):
         """Update the background color of the peg based on its color attribute."""
         color_map = {
-            "R": "#ff0000",  # Red
-            "G": "#00ff00",  # Green
-            "B": "#0000ff",  # Blue
-            "Y": "#ffff00",  # Yellow
-            "W": "#ffffff",  # White
-            "O": "#ffa500",  # Orange
+            1: "#ff0000",  # Red
+            2: "#00ff00",  # Green
+            3: "#ffff00",  # Yellow
+            4: "#0000ff",  # Blue
+            5: "#ffa500",  # Orange
+            6: "#8b4513",  # Brown
+            7: "#ffffff",  # White
+            8: "#000000",  # Black
+            
         }
         color_code = color_map.get(self.color, "#363646")
         # Hintergrundfarbe mit self.styles setzen
@@ -100,29 +103,8 @@ class ColorPeg(Static):
         return Text("  ")  # Platz für den Peg sicherstellen
 
 
-class FeedbackPeg(Static):
-    """A widget representing a single feedback peg."""
-
-    def __init__(self, color: str = "", *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.color = color
-        self.update_color()  # Set the background color directly
-
-    def update_color(self):
-        color_map = {
-            "B": "#000000",  # Black for correct color and position
-            "W": "#ffffff",  # White for correct color but wrong position
-        }
-        color_code = color_map.get(self.color, "#363646")
-        self.styles.background = color_code
-
-    def render(self) -> RenderableType:
-        return Text("  ")  # Platz für den Peg sicherstellen
-
-
 class GameScreen(Screen):
-    COLORS = ["R", "G", "B", "Y", "W", "O"]
-    MAX_TRIES = 10
+    COLORS = [1,2,3,4,5,6,7,8]
 
     BINDINGS = [
         Binding("escape", "back_to_menu", "Back to Menu"),
@@ -210,21 +192,22 @@ class GameScreen(Screen):
     """
     
 
-    def __init__(self):
+    def __init__(self, game_mode: str):
         super().__init__()
-        self.secret_code = choices(self.COLORS, k=5)
-        self.current_try = 0
-        log(f"Secret code: {self.secret_code}")  # For debugging
+        self.game_mode = game_mode
+        self.game_controller = GameController()
+        print("game_mode: ",game_mode)
+        self.game_controller.start_new_game(game_mode)
 
     def compose(self) -> ComposeResult:
         
         with Vertical(id="game-container"):
             with Vertical(id="board"):
-                for row in range(self.MAX_TRIES):
+                for row in range(self.app.settings.MAX_ROUNDS):
                     with Horizontal(id=f"row-{row}"):
                         with Horizontal(id=f"feedback-{row}"):
                             for feedback_peg in range(5):
-                                yield FeedbackPeg(
+                                yield ColorPeg(
                                     classes="feedback-peg",
                                     id=f"feedback-{row}-{feedback_peg}",
                                 )
@@ -234,13 +217,15 @@ class GameScreen(Screen):
             # Input field and submit button at the bottom
             with Horizontal(id="input-container"):
                 yield Input(
-                    placeholder="Enter 5 colors (R,G,B,Y,W,O)", id="guess-input"
+                    placeholder=self.app.settings.get_text("enter_colors"), id="guess-input"
                 )
-                yield Button("Submit", id="submit-button", variant="primary")
+                yield Button(self.app.settings.get_text("submit"), id="submit-button", variant="primary")
 
     def on_mount(self) -> None:
         """Focus the input field when the screen is mounted."""
+        self._update_board(self.game_controller.get_board())
         self.query_one("#guess-input").focus()
+
 
     def action_back_to_menu(self) -> None:
         self.app.pop_screen()
@@ -260,73 +245,51 @@ class GameScreen(Screen):
             self._handle_input()
 
     def _handle_input(self) -> None:
-        """Process the input and update the game state."""
         input_widget = self.query_one("#guess-input", Input)
-        guess = input_widget.value.upper().strip()
+        human_input = input_widget.value
 
-        # Validate input
-        if len(guess) != 5 or not all(c in self.COLORS for c in guess):
+        print("human_input: ",human_input)
+
+        self._update_board(self.game_controller.get_board())
+
+        try:
+            self.game_controller.play_round(human_input)
+        except ValueError:
             self.notify(
-                "Invalid input! Use 5 colors from: R,G,B,Y,W,O", severity="error"
+                self.app.settings.get_text("invalid_input"), severity="error"
             )
-            input_widget.value = ""  # Clear invalid input
+            input_widget.value = ""
             return
 
-        # Update pegs display
-        row = self.MAX_TRIES - 1 - self.current_try
-        for i, color in enumerate(guess):
-            peg = self.query_one(f"#peg-{row}-{i}", ColorPeg)
-            peg.color = color
-            peg.update_color()  # Aktualisiere die Hintergrundfarbe des Widgets
-            peg.refresh()
-            log(f"Changing Color of: {peg.id} with color: {peg.color}")
+        self._update_board(self.game_controller.get_board())
+        print(self.game_controller.current_game.display_board())
 
-            # Generate feedback
-        feedback = self._generate_feedback(guess)
-        for i, color in enumerate(feedback):
-            feedback_peg = self.query_one(f"#feedback-{row}-{i}", FeedbackPeg)
-            feedback_peg.color = color
-            feedback_peg.update_color()
-            feedback_peg.refresh()
-            log(
-                f"Changing Color of: {feedback_peg.id} with color: {feedback_peg.color}"
-            )
-
-        # Clear the input field for the next guess
         input_widget.value = ""
 
-        # Check if the guess is correct
-        if guess == self.secret_code:
-            self.notify("Congratulations! You've guessed the code!", severity="success")
+        if self.game_controller.get_game_over():
+            self.notify(self.app.settings.get_text("congratulations"), severity="success")
             self.app.pop_screen()
-        else:
-            self.current_try += 1
-            if self.current_try >= self.MAX_TRIES:
-                self.notify(
-                    f"Game Over! The correct code was: {self.secret_code}",
-                    severity="error",
-                )
-                self.app.pop_screen()
 
-    def _generate_feedback(self, guess: str) -> list:
-        """Generate feedback for the given guess."""
-        feedback = []
-        secret_code_copy = list(self.secret_code)
-        guess_copy = list(guess)
-
-        # First pass: Check for correct color and position
-        for i in range(5):
-            if guess_copy[i] == secret_code_copy[i]:
-                feedback.append("B")
-                secret_code_copy[i] = guess_copy[i] = None
-
-        # Second pass: Check for correct color but wrong position
-        for i in range(5):
-            if guess_copy[i] and guess_copy[i] in secret_code_copy:
-                feedback.append("W")
-                secret_code_copy[secret_code_copy.index(guess_copy[i])] = None
-
-        return feedback
+    def _update_board(self, board):
+        for i, (guess, feedback) in enumerate(zip(board.guesses, board.feedbacks)):
+            row = self.app.settings.MAX_ROUNDS - 1 - i
+            for j, color in enumerate(guess):
+                peg = self.query_one(f"#peg-{row}-{j}", ColorPeg)
+                peg.color = self.COLORS[color - 1]
+                peg.update_color()
+                peg.refresh()
+            if feedback:
+                black_pegs, white_pegs = feedback
+                for j in range(black_pegs):
+                    feedback_peg = self.query_one(f"#feedback-{row}-{j}", ColorPeg)
+                    feedback_peg.color = 8
+                    feedback_peg.update_color()
+                    feedback_peg.refresh()
+                for j in range(black_pegs, black_pegs + white_pegs):
+                    feedback_peg = self.query_one(f"#feedback-{row}-{j}", ColorPeg)
+                    feedback_peg.color = 7
+                    feedback_peg.update_color()
+                    feedback_peg.refresh()
 
 
 class MastermindApp(App):

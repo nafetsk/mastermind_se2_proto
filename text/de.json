@@ -5,7 +5,7 @@
     "settings": "EINSTELLUNGEN",
     "exit": "BEENDEN",
     "select_mode": "Spielart auswählen!",
-    "rater": "Rater",
+    "guesser": "Rater",
     "coder": "Kodierer",
     "back": "Zurück",
     "enter_colors": "Geben Sie 5 Farben ein (R,G,B,Y,W,O)",
@@ -14,5 +14,6 @@
     "game_over": "Spiel vorbei! Der richtige Code war: ",
     "choose_language": "Sprache wählen",
     "english": "Englisch",
-    "german": "Deutsch"
+    "german": "Deutsch",
+    "invalid_input": "Ungültige Eingabe! Bitte geben Sie 5 Farben ein (1,2,3,4,5,6)"
 }

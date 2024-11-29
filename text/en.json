@@ -5,7 +5,7 @@
     "settings": "SETTINGS",
     "exit": "EXIT",
     "select_mode": "Select Mode!",
-    "rater": "Guesser",
+    "guesser": "Guesser",
     "coder": "Coder",
     "back": "Back",
     "enter_colors": "Enter 5 colors (R,G,B,Y,W,O)",
@@ -14,5 +14,6 @@
     "game_over": "Game Over! The correct code was: ",
     "choose_language": "Choose Language",
     "english": "English",
-    "german": "German"
+    "german": "German",
+    "invalid_input": "Invalid input! Please enter 5 colors (1,2,3,4,5,6)"
 }
