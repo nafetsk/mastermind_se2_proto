@@ -30,6 +30,8 @@ class MenuScreen(Screen):
             self.app.push_screen(ModeScreen())
         elif event.button.id == "settings":
             self.app.push_screen(SettingsScreen())
+        elif event.button.id == "load-game":
+            self.app.push_screen(GameScreen(load_game=True))
         elif event.button.id == "exit":
             self.app.exit()
 
@@ -46,9 +48,9 @@ class ModeScreen(Screen):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "guesser":
-            self.app.push_screen(GameScreen("guesser"))
+            self.app.push_screen(GameScreen(game_mode="guesser"))
         elif event.button.id == "coder":
-            self.app.push_screen(GameScreen("coder"))
+            self.app.push_screen(GameScreen(game_mode="coder"))
         elif event.button.id == "back":
             self.app.pop_screen()
 
@@ -104,10 +106,9 @@ class ColorPeg(Static):
 
 
 class GameScreen(Screen):
-    COLORS = [1,2,3,4,5,6,7,8]
 
     BINDINGS = [
-        Binding("escape", "back_to_menu", "Back to Menu"),
+        Binding("escape", "save_and_back_to_menu", "Back to Menu"),
         Binding("enter", "submit_guess", "Submit Guess"),
     ]
 
@@ -131,6 +132,14 @@ class GameScreen(Screen):
         border: heavy $accent;
         background: #363646;
         align: center middle;
+    }
+
+    #secret-code-container {
+        layout: horizontal;
+        padding: 1;
+        align: center middle;
+        width: 50%;
+        height: 6; /* Ensure it's tall enough to display pegs */
     }
 
     .guess-row {
@@ -190,18 +199,30 @@ class GameScreen(Screen):
     .color-W { background: #ffffff; }
     .color-O { background: #ffa500; }
     """
+
+    def __init__(self, game_mode: str = None, load_game: bool = False):
+        super().__init__()
+        if load_game:
+            self.game_controller = GameController()
+            self.game_controller.load_game()
+            self.game_mode = self.game_controller.get_game_mode()
+        else:
+            self.game_mode = game_mode
+            self.game_controller = GameController()
+            self.game_controller.start_new_game(game_mode)
+        
+        print("game_mode: ", game_mode)
+        
+    def compose(self) -> ComposeResult:
     
 
-    def __init__(self, game_mode: str):
-        super().__init__()
-        self.game_mode = game_mode
-        self.game_controller = GameController()
-        print("game_mode: ",game_mode)
-        self.game_controller.start_new_game(game_mode)
-
-    def compose(self) -> ComposeResult:
-        
         with Vertical(id="game-container"):
+            if self.game_mode == "coder":
+                with Horizontal(id="secret-code-container"):
+                    secret_code = self.game_controller.get_secret_code()
+                    print("Rendering Secret Code:", secret_code)
+                    for index, color in enumerate(secret_code):
+                        yield ColorPeg(classes="peg", color=color, id=f"secret-peg-{index}")
             with Vertical(id="board"):
                 for row in range(self.app.settings.MAX_ROUNDS):
                     with Horizontal(id=f"row-{row}"):
@@ -227,7 +248,9 @@ class GameScreen(Screen):
         self.query_one("#guess-input").focus()
 
 
-    def action_back_to_menu(self) -> None:
+    def action_save_and_back_to_menu(self) -> None:
+        """Save the game and go back to the menu."""
+        self.game_controller.save_game()
         self.app.pop_screen()
 
     def action_submit_guess(self) -> None:
@@ -275,7 +298,7 @@ class GameScreen(Screen):
             row = self.app.settings.MAX_ROUNDS - 1 - i
             for j, color in enumerate(guess):
                 peg = self.query_one(f"#peg-{row}-{j}", ColorPeg)
-                peg.color = self.COLORS[color - 1]
+                peg.color = color
                 peg.update_color()
                 peg.refresh()
             if feedback:

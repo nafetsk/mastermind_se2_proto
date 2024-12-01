@@ -1,20 +1,6 @@
 import random
 import json
 
-class Code:
-    def __init__(self, length=5, colors=None):
-        self.colors = colors or [1, 2, 3, 4, 5, 6]  # Default colors
-        self.length = length
-        self.code = []
-
-    def generate_random(self):
-        self.code = [random.choice(self.colors) for _ in range(self.length)]
-
-    def validate_code(self, code):
-        return len(code) == self.length and all(c in self.colors for c in code)
-
-
-
 class Board:
     def __init__(self):
         self.guesses = []
@@ -68,7 +54,7 @@ class Guesser(Player):
         später soll das abhängig von den Feedbacks und der Historie sein.
         """
         # Simple random guessing strategy
-        possible_colors = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        possible_colors = [1, 2, 3, 4, 5, 6, 7, 8] # TODO: Make this dynamic
         guess = [random.choice(possible_colors) for _ in range(5)]
         return guess
 
@@ -137,9 +123,13 @@ class Game:
             game_state = json.load(file)
 
         self.game_mode = game_state['game_mode']
+        if self.game_mode == "guesser":
+            self.computer_player = Coder()
+        else:
+            self.computer_player = Guesser()
         self.board = Board()
         self.board.guesses = game_state['board']['guesses']
-        self.board.feedbacks = game_state['board']['feedbacks']
+        self.board.feedbacks = [tuple(feedback) for feedback in game_state['board']['feedbacks']]
         self.secret_code = game_state['secret_code']
         
 

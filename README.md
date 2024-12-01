@@ -2,4 +2,11 @@
 
 ```bash
 pip install textual
+pip install pytest
 ```
+
+Run 
+```bash
+pytest
+```
+for the test-suite

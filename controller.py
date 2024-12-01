@@ -60,3 +60,18 @@ class GameController():
     
     def generate_random_code(self):
         return [random.choice(self.settings.COLORS) for _ in range(self.settings.CODE_LENGTH)]
+    
+    def get_secret_code(self):
+        return self.current_game.secret_code
+    
+    def save_game(self):
+        self.current_game.save_game()
+
+    def load_game(self):
+        self.current_game = Game()
+        self.current_game.load_game()
+        
+        self.game_mode = self.current_game.game_mode
+
+    def get_game_mode(self):
+        return self.game_mode
