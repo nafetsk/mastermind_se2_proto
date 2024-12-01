@@ -9,4 +9,10 @@ Run
 ```bash
 pytest
 ```
-for the test-suite
+for the test-suite.
+
+Run 
+```bash
+python app.py
+```
+to start the game.

@@ -112,94 +112,6 @@ class GameScreen(Screen):
         Binding("enter", "submit_guess", "Submit Guess"),
     ]
 
-    CSS = """
-    Screen {
-        background: #2b2b3b;
-        layers: base overlay;
-        align: center middle;  /* Center everything in the screen */
-    }
-
-    #game-container {
-        width: 100%;
-        height: 100%;
-        align: center middle;  /* Center its contents */
-    }
-
-    #board {
-        width: 50%;
-        height: 80%;  /* Changed from 70% to auto for better content fitting */
-        min-height: 30;  /* Minimum height to ensure visibility */
-        border: heavy $accent;
-        background: #363646;
-        align: center middle;
-    }
-
-    #secret-code-container {
-        layout: horizontal;
-        padding: 1;
-        align: center middle;
-        width: 50%;
-        height: 6; /* Ensure it's tall enough to display pegs */
-    }
-
-    .guess-row {
-        height: 3;
-        layout: horizontal;
-        align: center middle;
-        padding: 1;
-        margin-bottom: 1;
-    }
-
-    .peg {
-        width: 4;
-        height: 3;
-        content-align: center middle;
-        border: round $accent;
-        margin-right: 1;
-        background: #FFFFFF;
-    }
-
-    .feedback-peg {
-        width: 2;
-        height: 3;
-        content-align: center middle;
-        margin-right: 2;
-        background: #2b2b3b;
-        border: round $accent;
-    }
-
-    #input-container {
-        layout: horizontal;
-        height: 8;
-        margin-top: 1;
-        background: #464656;
-        padding: 1;
-        align: center middle;
-        width: 50%;  /* Match board width */
-    }
-
-    Input {
-        margin: 1;
-        width: 30;
-    }
-
-    Input:focus {
-        border: double $accent;
-    }
-
-    #submit-button {
-        margin: 1;
-        width: 10;
-    }
-
-    .color-R { background: #ff0000; }
-    .color-G { background: #00ff00; }
-    .color-B { background: #0000ff; }
-    .color-Y { background: #ffff00; }
-    .color-W { background: #ffffff; }
-    .color-O { background: #ffa500; }
-    """
-
     def __init__(self, game_mode: str = None, load_game: bool = False):
         super().__init__()
         if load_game:
@@ -214,8 +126,6 @@ class GameScreen(Screen):
         print("game_mode: ", game_mode)
         
     def compose(self) -> ComposeResult:
-    
-
         with Vertical(id="game-container"):
             if self.game_mode == "coder":
                 with Horizontal(id="secret-code-container"):
@@ -241,6 +151,10 @@ class GameScreen(Screen):
                     placeholder=self.app.settings.get_text("enter_colors"), id="guess-input"
                 )
                 yield Button(self.app.settings.get_text("submit"), id="submit-button", variant="primary")
+                if self.game_mode == "guesser":
+                    yield Static(self.app.settings.get_text("color_encoding_guesser"), id="color_encoding")
+                else:
+                    yield Static(self.app.settings.get_text("color_encoding_coder"), id="color_encoding")
 
     def on_mount(self) -> None:
         """Focus the input field when the screen is mounted."""
@@ -320,44 +234,13 @@ class MastermindApp(App):
         super().__init__()
         self.settings = settings
 
-
-    CSS = """
-    Screen {
-        align: center middle;
-    }
-    
-    #menu-container {
-        width: 40;
-        height: 20;
-        border: heavy $accent;
-        padding: 1 2;
-        background: #2b2b3b;
-    }
-    
-    #title {
-        color: $text;
-        text-align: center;
-        text-style: bold;
-        margin-bottom: 1;
-    }
-    
-    Button {
-        width: 100%;
-        margin-bottom: 1;
-    }
-    """
+    CSS_PATH = "tcss/mastermind.tcss"
 
     BINDINGS = [Binding("q", "quit", "Quit the game", show=False)]
 
-   
     def on_mount(self) -> None:
         self.push_screen(MenuScreen())
 
     def action_quit(self) -> None:
         self.exit()
 
-
-if __name__ == "__main__":
-    settings = Settings(language='en')
-    app = MastermindApp(settings)
-    app.run()
