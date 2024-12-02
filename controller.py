@@ -70,7 +70,7 @@ class GameController():
     def load_game(self):
         self.current_game = Game()
         self.current_game.load_game()
-        
+
         self.game_mode = self.current_game.game_mode
 
     def get_game_mode(self):

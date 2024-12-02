@@ -1,5 +1,6 @@
 import random
 import json
+from itertools import product
 
 class Board:
     def __init__(self):
@@ -48,6 +49,7 @@ class Coder(Player):
         return black, white
 
 class Guesser(Player):
+
     def make_guess(self, board):
         """
         Wenn der Computer Guesser ist, wird ein zufälliger Code generiert.
@@ -129,7 +131,10 @@ class Game:
             self.computer_player = Guesser()
         self.board = Board()
         self.board.guesses = game_state['board']['guesses']
-        self.board.feedbacks = [tuple(feedback) for feedback in game_state['board']['feedbacks']]
+        if game_state['board']['feedbacks']:
+            self.board.feedbacks = [tuple(feedback) for feedback in game_state['board']['feedbacks']]
+        else:
+            self.board.feedbacks = []
         self.secret_code = game_state['secret_code']
         
 

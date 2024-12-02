@@ -11,6 +11,7 @@ from textual import log
 from rich.text import Text
 from settings import Settings
 from controller import GameController
+import os
 
 
 class MenuScreen(Screen):
@@ -31,7 +32,10 @@ class MenuScreen(Screen):
         elif event.button.id == "settings":
             self.app.push_screen(SettingsScreen())
         elif event.button.id == "load-game":
-            self.app.push_screen(GameScreen(load_game=True))
+            if os.path.exists("game_state.json"): 
+                self.app.push_screen(GameScreen(load_game=True))
+            else:
+                self.notify(self.app.settings.get_text("no_saved_game"), severity="error")
         elif event.button.id == "exit":
             self.app.exit()
 
@@ -192,9 +196,14 @@ class GameScreen(Screen):
         try:
             self.game_controller.play_round(human_input)
         except ValueError:
-            self.notify(
-                self.app.settings.get_text("invalid_input"), severity="error"
-            )
+            if self.game_mode == "guesser":
+                self.notify(
+                    self.app.settings.get_text("invalid_input_guesser"), severity="error"
+                )
+            else:
+                self.notify(
+                    self.app.settings.get_text("invalid_input_coder"), severity="error"
+                )
             input_widget.value = ""
             return
 

@@ -1,28 +1,25 @@
 {
-    "game_mode": "guesser",
+    "game_mode": "coder",
     "board": {
         "guesses": [
             [
-                1,
                 2,
-                3,
+                7,
                 4,
-                5
+                2,
+                7
             ]
         ],
         "feedbacks": [
-            [
-                0,
-                4
-            ]
+            null
         ],
         "rounds": 1
     },
     "secret_code": [
-        5,
-        4,
+        2,
         6,
         3,
-        2
+        5,
+        3
     ]
 }

@@ -15,7 +15,9 @@
     "choose_language": "Sprache wählen",
     "english": "Englisch",
     "german": "Deutsch",
-    "invalid_input": "Ungültige Eingabe! Bitte geben Sie 5 Farben ein (1,2,3,4,5,6,7,8)",
+    "invalid_input_guesser": "Ungültige Eingabe! Bitte geben Sie 5 Farben ein (1,2,3,4,5,6,7,8)",
+    "invalid_input_coder": "Ungültige Eingabe! Bitte geben Sie Feedback-Code aus (7,8,0)",
     "color_encoding_guesser": "1: Rot, 2: Grün, 3: Gelb, 4: Blau,\n5: Orange, 6: Braun, 7: Weiß, 8: Schwarz",
-    "color_encoding_coder": "7: Weiß, 8: Schwarz, 0: Leer"
+    "color_encoding_coder": "7: Weiß, 8: Schwarz, 0: Leer",
+    "no_saved_game": "Kein gespeichertes Spiel gefunden!"
 }
