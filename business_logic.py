@@ -1,6 +1,6 @@
 import random
 import json
-from itertools import product
+import requests
 
 class Board:
     def __init__(self):
@@ -59,6 +59,28 @@ class Guesser(Player):
         possible_colors = [1, 2, 3, 4, 5, 6, 7, 8] # TODO: Make this dynamic
         guess = [random.choice(possible_colors) for _ in range(5)]
         return guess
+    
+class OnlineCoder(Player):
+    def __init__(self, ip, port):
+        self.ip = ip
+        self.port = port
+        self.url = f"http://{ip}:{port}"
+        # post request to server to start game
+        start_data = {
+            "gameid": 0,
+            "gamerid": "testID",
+            "positions": 5,
+            "colors": 8,
+            "value": "",
+        }.json()
+        self.game_id = requests.post(self.url, start_data).json()['gameid']
+
+
+    def create_feedback(self, guess):
+        """
+        Hier wird dann ein POST Request an den Server geschickt, um das Feedback zu erhalten.
+        """
+        pass
 
 
 class Game:

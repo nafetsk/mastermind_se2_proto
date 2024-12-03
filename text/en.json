@@ -19,5 +19,9 @@
     "invalid_input_coder": "Invalid input! Please enter Feedback Code from (7,8,0)",
     "color_encoding_guesser": "1: Red, 2: Green, 3: Yellow, 4: Blue,\n5: Orange, 6: Brown, 7: White, 8: Black",
     "color_encoding_coder": "7: White, 8: Black, 0: Empty",
-    "no_saved_game": "No saved game found!"
+    "no_saved_game": "No saved game found!",
+    "online": "Online",
+    "enter_ip": "Enter IP Address",
+    "enter_port": "Enter Port",
+    "connect": "Connect"
 }

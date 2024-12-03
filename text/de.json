@@ -19,5 +19,9 @@
     "invalid_input_coder": "Ungültige Eingabe! Bitte geben Sie Feedback-Code aus (7,8,0)",
     "color_encoding_guesser": "1: Rot, 2: Grün, 3: Gelb, 4: Blau,\n5: Orange, 6: Braun, 7: Weiß, 8: Schwarz",
     "color_encoding_coder": "7: Weiß, 8: Schwarz, 0: Leer",
-    "no_saved_game": "Kein gespeichertes Spiel gefunden!"
+    "no_saved_game": "Kein gespeichertes Spiel gefunden!",
+    "online": "Online",
+    "enter_ip": "IP-Adresse eingeben",
+    "enter_port": "Port eingeben",
+    "connect": "Verbinden"
 }

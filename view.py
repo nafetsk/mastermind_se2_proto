@@ -20,6 +20,7 @@ class MenuScreen(Screen):
         yield Container(
             Static(self.app.settings.get_text("menu_title"), id="title"),
             Button(self.app.settings.get_text("new_game"), id="new-game", variant="primary"),
+            Button(self.app.settings.get_text("online"), id="online", variant="primary"),
             Button(self.app.settings.get_text("load_game"), id="load-game", variant="primary"),
             Button(self.app.settings.get_text("settings"), id="settings", variant="primary"),
             Button(self.app.settings.get_text("exit"), id="exit", variant="primary"),
@@ -36,6 +37,8 @@ class MenuScreen(Screen):
                 self.app.push_screen(GameScreen(load_game=True))
             else:
                 self.notify(self.app.settings.get_text("no_saved_game"), severity="error")
+        elif event.button.id == "online":
+            self.app.push_screen(OnlineConnectScreen())
         elif event.button.id == "exit":
             self.app.exit()
 
@@ -55,6 +58,24 @@ class ModeScreen(Screen):
             self.app.push_screen(GameScreen(game_mode="guesser"))
         elif event.button.id == "coder":
             self.app.push_screen(GameScreen(game_mode="coder"))
+        elif event.button.id == "back":
+            self.app.pop_screen()
+
+class OnlineConnectScreen(Screen):
+    def compose(self) -> ComposeResult:
+        yield Container(
+            Static(self.app.settings.get_text("enter_ip"), id="ip-title"),
+            Input(placeholder=self.app.settings.get_text("enter_ip"), id="ip-input"),
+            Static(self.app.settings.get_text("enter_port"), id="port-title"),
+            Input(placeholder=self.app.settings.get_text("enter_port"), id="port-input"),
+            Button(self.app.settings.get_text("connect"), id="connect", variant="primary"),
+            Button(self.app.settings.get_text("back"), id="back", variant="primary"),
+            id="menu-container",
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "connect":
+            pass
         elif event.button.id == "back":
             self.app.pop_screen()
 

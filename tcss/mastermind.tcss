@@ -5,7 +5,7 @@ Screen {
 }
 
 #menu-container {
-    width: 40;
+    width: 25%;
     height: auto;
     border: heavy $accent;
     padding: 1 2;
@@ -27,13 +27,12 @@ Button {
 #game-container {
         width: 100%;
         height: 100%;
-        align: center middle;  /* Center its contents */
+        align: center middle;
 }
 
 #board {
     width: 50%;
-    height: 80%;  /* Changed from 70% to auto for better content fitting */
-    min-height: 30;  /* Minimum height to ensure visibility */
+    height: 70%;  
     border: heavy $accent;
     background: #363646;
     align: center middle;
@@ -41,10 +40,9 @@ Button {
 
 #secret-code-container {
     layout: horizontal;
-    padding: 1;
     align: center middle;
     width: 50%;
-    height: 6; /* Ensure it's tall enough to display pegs */
+    height: 10%; 
 }
 
 .guess-row {
@@ -56,31 +54,30 @@ Button {
 }
 
 .peg {
-    width: 4;
-    height: 3;
+    width: 7%;
+    height: 1%;
     content-align: center middle;
     border: round $accent;
-    margin-right: 1;
+
     background: #FFFFFF;
 }
 
 .feedback-peg {
-    width: 2;
-    height: 3;
+    width: 5%;
+    height: 1%;
     content-align: center middle;
-    margin-right: 2;
+    /* margin-right: 1; */
     background: #2b2b3b;
     border: round $accent;
 }
 
 #input-container {
     layout: horizontal;
-    height: 8;
-    margin-top: 1;
+    height: 20%;
     background: #464656;
     padding: 1;
     align: center middle;
-    width: 50%;  /* Match board width */
+    width: 50%; 
 }
 
 Input {

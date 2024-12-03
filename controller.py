@@ -1,14 +1,16 @@
 from settings import Settings
 from business_logic import Board, Coder, Guesser, Game
-import random
+import random, json, requests
+
 
 class GameController():
     def __init__(self):
         self.settings = Settings()
         self.current_game = None
         self.game_mode = None
+        self.online_game = None
 
-    def start_new_game(self, game_mode):
+    def start_new_game(self, game_mode, online=False):
         if game_mode == "guesser":
             self.current_game = Game(game_mode, Coder(), Board(), self.generate_random_code())
             self.game_mode = game_mode
@@ -17,6 +19,8 @@ class GameController():
             self.game_mode = game_mode
             # Wenn man als Coder spielt, muss der Computer zuerst raten
             self.current_game.computer_guess()
+        elif game_mode == "online":
+            pass
         else:
             raise ValueError("Invalid game mode")
         
@@ -75,3 +79,4 @@ class GameController():
 
     def get_game_mode(self):
         return self.game_mode
+    
